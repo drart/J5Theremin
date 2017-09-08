@@ -5,32 +5,84 @@ var udpIsReady = false;
 
 
 board.on("ready", function() {
+
   var proximity = new five.Proximity({
     controller: "GP2Y0A21YK",
     pin: "A0"
   });
-
   proximity.on("data", function() {
     console.log("  cm  : ", this.cm);
     if (udpIsReady){
     udpPort.send({
-        address: "/carrier/frequency",
+        address: "/proximity/1",
         args: [
             {
                 type: "f",
                 value: this.cm
             }
         ]
-    }, "127.0.0.1", 7400)
-
+        }, "127.0.0.1", 7400)
     } 
   });
 
- /*
-  proximity.on("change", function() {
-    console.log("The obstruction has moved.");
+
+  var prox2  = new five.Proximity({
+    controller: "GP2Y0A21YK",
+    pin: "A1"
   });
-*/
+  prox2.on("data", function() {
+    console.log("  cm  : ", this.cm);
+    if (udpIsReady){
+    udpPort.send({
+        address: "/proximity/2",
+        args: [
+            {
+                type: "f",
+                value: this.cm
+            }
+        ]
+        }, "127.0.0.1", 7400)
+    } 
+  });
+
+  var prox3 = new five.Proximity({
+    controller: "GP2Y0A21YK",
+    pin: "A2"
+  });
+  prox3.on("data", function() {
+    console.log("  cm  : ", this.cm);
+    if (udpIsReady){
+    udpPort.send({
+        address: "/proximity/3",
+        args: [
+            {
+                type: "f",
+                value: this.cm
+            }
+        ]
+        }, "127.0.0.1", 7400)
+    } 
+  });
+
+  var prox4 = new five.Proximity({
+    controller: "GP2Y0A21YK",
+    pin: "A3"
+  });
+  prox4.on("data", function() {
+    console.log("  cm  : ", this.cm);
+    if (udpIsReady){
+    udpPort.send({
+        address: "/proximity/4",
+        args: [
+            {
+                type: "f",
+                value: this.cm
+            }
+        ]
+        }, "127.0.0.1", 7400)
+    } 
+  });
+
 });
 
 
