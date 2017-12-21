@@ -1,9 +1,20 @@
 var five = require("johnny-five");
+var osc = require("osc");
+var WebSocket = require('ws');
+var express = require('express');
+
+///////////////////////////////////////
+// Express webserver SETUP
+///////////////////////////////////////
+var app = express();
+app.use( "/", express.static(__dirname) );
+app.listen(8000);
+
+
+///////////////////////////////////////
+// Johnny-Five.js SETUP
+///////////////////////////////////////
 var board = new five.Board();
-
-var udpIsReady = false;
-
-
 board.on("ready", function() {
 
   var proximity = new five.Proximity({
@@ -11,9 +22,9 @@ board.on("ready", function() {
     pin: "A0"
   });
   proximity.on("data", function() {
+    if (oscIsReady){
     console.log("  cm  : ", this.cm);
-    if (udpIsReady){
-    udpPort.send({
+    oscPort.send({
         address: "/proximity/1",
         args: [
             {
@@ -21,7 +32,7 @@ board.on("ready", function() {
                 value: this.cm
             }
         ]
-        }, "127.0.0.1", 7400)
+        })
     } 
   });
 
@@ -31,9 +42,9 @@ board.on("ready", function() {
     pin: "A1"
   });
   prox2.on("data", function() {
-    console.log("  cm  : ", this.cm);
-    if (udpIsReady){
-    udpPort.send({
+    //console.log("  cm  : ", this.cm);
+    if (oscIsReady){
+    oscPort.send({
         address: "/proximity/2",
         args: [
             {
@@ -50,9 +61,9 @@ board.on("ready", function() {
     pin: "A2"
   });
   prox3.on("data", function() {
-    console.log("  cm  : ", this.cm);
-    if (udpIsReady){
-    udpPort.send({
+    //console.log("  cm  : ", this.cm);
+    if (oscIsReady){
+    oscPort.send({
         address: "/proximity/3",
         args: [
             {
@@ -69,9 +80,9 @@ board.on("ready", function() {
     pin: "A3"
   });
   prox4.on("data", function() {
-    console.log("  cm  : ", this.cm);
-    if (udpIsReady){
-    udpPort.send({
+    //console.log("  cm  : ", this.cm);
+    if (oscIsReady){
+    oscPort.send({
         address: "/proximity/4",
         args: [
             {
@@ -85,48 +96,21 @@ board.on("ready", function() {
 
 });
 
+///////////////////////////////////////
+// OSC.js SETUP
+///////////////////////////////////////
+
+var wss = new WebSocket.Server({ port: 8081 });
+var oscPort = undefined;
+var oscIsReady = false;
+
+wss.on("connection", function (socket) {
+    console.log("A Web Socket connection has been established!");
+    oscPort = new osc.WebSocketPort({
+        socket: socket
+    });
 
 
-var osc = require("osc");
-
-var getIPAddresses = function () {
-    var os = require("os"),
-        interfaces = os.networkInterfaces(),
-        ipAddresses = [];
-
-    for (var deviceName in interfaces) {
-        var addresses = interfaces[deviceName];
-        for (var i = 0; i < addresses.length; i++) {
-            var addressInfo = addresses[i];
-            if (addressInfo.family === "IPv4" && !addressInfo.internal) {
-                ipAddresses.push(addressInfo.address);
-            }
-        }
-    }
-
-    return ipAddresses;
-};
-
-var udpPort = new osc.UDPPort({
-    localAddress: "127.0.0.1",
-    localPort: 57121 
-});
-
-udpPort.on("error", function (err) {
-    console.log(err);
-});
-
-udpPort.open();
-
-udpPort.on("ready", function () {
-    udpIsReady = true;
-    udpPort.send({
-        address: "/carrier/frequency",
-        args: [
-            {
-                type: "f",
-                value: 440
-            }
-        ]
-    }, "127.0.0.1", 7400);
+	oscPort.open();
+	oscIsReady = true;
 });
