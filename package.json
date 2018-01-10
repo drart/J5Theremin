@@ -1,0 +1,29 @@
+{
+  "name": "j5theremin",
+  "version": "0.0.1",
+  "description": "Arduino Distance Sensors to Theremin thingy",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "johnny-five": "^0.13.0",
+    "osc": "^2.2.0",
+    "ws": "^4.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drart/J5Theremin.git"
+  },
+  "author": "Adam Tindale",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drart/J5Theremin/issues"
+  },
+  "homepage": "https://github.com/drart/J5Theremin#readme"
+}
